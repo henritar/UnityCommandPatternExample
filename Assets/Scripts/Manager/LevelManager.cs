@@ -96,14 +96,14 @@ public class LevelManager : MonoBehaviour
 
         BoardParentAdjuster.Instance.PrintTilePositions();
         BoardParentAdjuster.Instance.AdjustBoardParentPivot();
+        BoardCameraController.Instance.AdjustCamera();
     }
 
     public void LoadNextLevel()
     {
         levelIndex++;
-        ClearLevel();
         LoadLevel();
-        GenerateLevel();
+        RestartLevel();
     }
 
     public void RestartLevel()

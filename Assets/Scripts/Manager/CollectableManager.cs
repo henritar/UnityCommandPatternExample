@@ -53,5 +53,6 @@ public class CollectableManager : MonoBehaviour
     public void RestartLevel()
     {
         collectedCount = 0;
+        totalCollectables = LevelManager.Instance.CurrentLevel.CollectablePosition.Count;
     }
 }
