@@ -6,6 +6,8 @@ public class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance { get; private set; }
 
+    public TileBehavior LastActiveTile { get; set; } // Última tile onde o jogador estava
+
     public float moveSpeed = 5f;
     private bool isUndoing = false; // Flag para evitar reentrância no Undo
     public bool IsUndoing => isUndoing;
@@ -31,6 +33,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        LastActiveTile = FindClosestTile(transform.position);
         targetPosition = transform.position; // Posição inicial
         originalPosition = transform.position;
     }
@@ -66,8 +69,10 @@ public class PlayerController : MonoBehaviour
 
     public void SetTargetPosition(Vector3 newPosition)
     {
-        targetPosition = new Vector3(newPosition.x, transform.position.y, newPosition.z);
-        originalPosition = transform.position; // Atualiza a posição original
+        targetPosition = newPosition;
+
+        // Atualiza a última tile ativa
+        LastActiveTile = FindClosestTile(newPosition);
     }
 
     public void UndoMove()

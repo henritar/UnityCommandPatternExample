@@ -69,12 +69,6 @@ public class RotateBoardCommand : IAsyncCommand
     {
         PlayerController player = PlayerController.Instance;
 
-        // Ignora validação durante Undo
-        if (player.IsUndoing)
-        {
-            return true; // Permite o movimento sem validar a tile
-        }
-
         // Encontra a tile mais próxima do jogador
         TileBehavior closestTile = FindClosestTile(player.transform.position);
 
@@ -84,18 +78,25 @@ public class RotateBoardCommand : IAsyncCommand
             return false;
         }
 
+        // Permite permanecer na mesma tile
+        if (closestTile == player.LastActiveTile)
+        {
+            Debug.Log("Jogador permaneceu na mesma tile. Rotação permitida.");
+            return true;
+        }
+
+        // Verifica se a tile está ativa
         if (closestTile.IsActive)
         {
-            // A tile já está ativada
+            Debug.LogWarning("Tile já ativada. Rotação não permitida.");
             return false;
         }
 
-        // Ativa a tile
+        // Ativa a nova tile e atualiza a última ativa
         closestTile.ActivateTile();
+        player.LastActiveTile = closestTile;
         return true;
     }
-
-
 
     private TileBehavior FindClosestTile(Vector3 position)
     {
@@ -114,4 +115,5 @@ public class RotateBoardCommand : IAsyncCommand
 
         return closestTile;
     }
+
 }
