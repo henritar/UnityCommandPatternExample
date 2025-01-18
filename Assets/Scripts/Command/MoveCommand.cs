@@ -23,7 +23,13 @@ public class MoveCommand : ICommand
 
         // Calcula a nova posição do jogador com base no espaçamento das tiles
         Vector3 newPosition = CalculateNewPosition();
-        if (!IsValidPosition(newPosition)) return false;
+
+        // Verifica se a posição é válida e se há uma barreira bloqueando
+        if (!IsValidPosition(newPosition) || IsBlockedByBarrier(previousPosition, newPosition))
+        {
+            player.Shake(previousPosition); // Feedback visual de movimento bloqueado
+            return false;
+        }
 
         // Lida com a tile de destino
         if (!HandleTile(newPosition)) return false;
@@ -130,6 +136,25 @@ public class MoveCommand : ICommand
             return hit.collider.GetComponent<TileBehavior>();
         }
         return null;
+    }
+
+    private bool IsBlockedByBarrier(Vector3 currentPosition, Vector3 targetPosition)
+    {
+        // Calcula o ponto médio entre a posição atual e a posição de destino
+        Vector3 midpoint = (currentPosition + targetPosition) / 2;
+
+        // Verifica colisões no ponto médio
+        Collider[] hits = Physics.OverlapSphere(midpoint, 0.1f); // Checa barreiras no meio do caminho
+        foreach (var hit in hits)
+        {
+            Barrier barrier = hit.GetComponent<Barrier>();
+            if (barrier != null && barrier.BlocksMovement(currentPosition, targetPosition))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private GameObject GetCollectableAtPosition(Vector3 position)

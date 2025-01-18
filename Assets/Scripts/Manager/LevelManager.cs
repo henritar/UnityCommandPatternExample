@@ -14,6 +14,10 @@ public class LevelManager : MonoBehaviour
     [SerializeField]
     private GameObject CollectablePrefab;
     [SerializeField]
+    private GameObject verticalBarrierPrefab;
+    [SerializeField]
+    private GameObject horizontalBarrierPrefab;
+    [SerializeField]
     private Transform TileParent; // Pai das tiles
     [SerializeField]
     private Transform CollectableParent; // Pai dos colecionáveis
@@ -94,10 +98,47 @@ public class LevelManager : MonoBehaviour
             collectable.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f); // Ajuste a escala do coletável, se necessário
         }
 
+        // Gera as barreiras
+        GenerateBarriers();
+
         BoardParentAdjuster.Instance.PrintTilePositions();
         BoardParentAdjuster.Instance.AdjustBoardParentPivot();
         BoardCameraController.Instance.AdjustCamera();
     }
+
+    private void GenerateBarriers()
+    {
+        // Barreiras Horizontais
+        foreach (Vector3 barrierData in CurrentLevel.HorizontalBarriers)
+        {
+            // Calcula a posição global da barreira horizontal
+            Vector3 worldPosition = new Vector3(
+                barrierData.x * tileDistance,
+                0,
+                barrierData.z * tileDistance + (barrierData.y == 0 ? -tileDistance / 2 : tileDistance / 2)
+            );
+
+            // Instancia a barreira horizontal com rotação padrão (sem rotação necessária)
+            Quaternion horizontalRotation = Quaternion.Euler(0, 90, 0);
+            Instantiate(horizontalBarrierPrefab, worldPosition, horizontalRotation, boardParent);
+        }
+
+        // Barreiras Verticais
+        foreach (Vector3 barrierData in CurrentLevel.VerticalBarriers)
+        {
+            // Calcula a posição global da barreira vertical
+            Vector3 worldPosition = new Vector3(
+                barrierData.x * tileDistance + (barrierData.y == 2 ? -tileDistance / 2 : tileDistance / 2),
+                0,
+                barrierData.z * tileDistance
+            );
+
+            Instantiate(verticalBarrierPrefab, worldPosition, Quaternion.identity, boardParent);
+        }
+    }
+
+
+
 
     public void LoadNextLevel()
     {

@@ -739,6 +739,7 @@ MonoBehaviour:
   minFOV: 60
   maxFOV: 75
   padding: 5
+  distanceMultiplier: 1.2
 --- !u!1001 &1874608029
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -998,6 +999,18 @@ PrefabInstance:
       propertyPath: CollectableParent
       value: 
       objectReference: {fileID: 771295118}
+    - target: {fileID: 5510551503911378892, guid: 59928a20090111440ab75cdc2913cb92,
+        type: 3}
+      propertyPath: verticalBarrierPrefab
+      value: 
+      objectReference: {fileID: 2432871370352796814, guid: 4572d977f4714ac4eba2e77d437a8b4b,
+        type: 3}
+    - target: {fileID: 5510551503911378892, guid: 59928a20090111440ab75cdc2913cb92,
+        type: 3}
+      propertyPath: horizontalBarrierPrefab
+      value: 
+      objectReference: {fileID: 8406468619478574295, guid: cfebe41d36d99444dab69e336ef94f85,
+        type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -8,4 +8,10 @@ public class SO_Level : ScriptableObject
     public int ySize;
 
     public List<Vector3> CollectablePosition;
+
+    // Barreiras verticais (posição centralizada na borda esquerda ou direita da tile)
+    public List<Vector3> VerticalBarriers;
+
+    // Barreiras horizontais (posição centralizada na borda superior ou inferior da tile)
+    public List<Vector3> HorizontalBarriers;
 }
