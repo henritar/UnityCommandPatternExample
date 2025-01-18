@@ -801,6 +801,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1929543150}
+  - component: {fileID: 1929543151}
   m_Layer: 0
   m_Name: Board
   m_TagString: Untagged
@@ -826,6 +827,19 @@ Transform:
   - {fileID: 771295118}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1929543151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1929543149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e62fd346fb25c488b56650a13abdec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boardParent: {fileID: 1929543150}
 --- !u!4 &1949047254 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6250764862443529016, guid: feeba3a355f65b24490df3bb1b5e6a9d,

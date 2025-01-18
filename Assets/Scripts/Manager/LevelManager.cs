@@ -34,12 +34,13 @@ public class LevelManager : MonoBehaviour
             Destroy(gameObject);
         }
         LoadLevel();
+        GenerateLevel();
     }
 
     void Start()
     {
         
-        GenerateLevel();
+        
     }
 
     void LoadLevel()
