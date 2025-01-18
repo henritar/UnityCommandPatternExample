@@ -112,6 +112,8 @@ public class PlayerController : MonoBehaviour
         {
             commandHistory.Push(command);
         }
+
+        CollectableManager.Instance.CheckLevelComplete();
     }
 
     public void Shake(Vector3 startPosition)

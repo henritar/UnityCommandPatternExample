@@ -27,7 +27,6 @@ public class CollectableManager : MonoBehaviour
     public void CollectItem()
     {
         collectedCount++;
-        CheckLevelComplete();
     }
 
     public void RestoreItem()
@@ -35,7 +34,7 @@ public class CollectableManager : MonoBehaviour
         collectedCount = Mathf.Max(0, collectedCount - 1); // Evita números negativos
     }
 
-    private void CheckLevelComplete()
+    public void CheckLevelComplete()
     {
         if (collectedCount >= totalCollectables)
         {
@@ -43,7 +42,7 @@ public class CollectableManager : MonoBehaviour
         }
     }
 
-    private void CompleteLevel()
+    public void CompleteLevel()
     {
         Debug.Log("Level Complete!");
         LevelManager.Instance.LoadNextLevel(); // Avança para o próximo nível
