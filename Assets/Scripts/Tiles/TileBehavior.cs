@@ -8,6 +8,11 @@ public class TileBehavior : MonoBehaviour
     private Renderer tileRenderer;
     public bool IsActive { get; private set; } = false; // Rastreamento do estado da tile
 
+    public bool HasBarrierNorth { get; set; }
+    public bool HasBarrierSouth { get; set; }
+    public bool HasBarrierEast { get; set; }
+    public bool HasBarrierWest { get; set; }
+
     private void Start()
     {
         // Obtém o Renderer da tile
@@ -48,5 +53,13 @@ public class TileBehavior : MonoBehaviour
             tileRenderer.material = inactiveMaterial;
             Debug.Log($"Tile {gameObject.name} desativada.");
         }
+    }
+
+    public void SetBarriers(bool north, bool south, bool east, bool west)
+    {
+        HasBarrierNorth = north;
+        HasBarrierSouth = south;
+        HasBarrierEast = east;
+        HasBarrierWest = west;
     }
 }

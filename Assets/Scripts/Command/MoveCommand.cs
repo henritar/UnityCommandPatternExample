@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 
 public class MoveCommand : ICommand
 {
@@ -24,10 +25,12 @@ public class MoveCommand : ICommand
         // Calcula a nova posição do jogador com base no espaçamento das tiles
         Vector3 newPosition = CalculateNewPosition();
 
+        Vector3 snappedCurrentPosition = SnapToTileCenter(previousPosition);
+        Vector3 snappedTargetPosition = SnapToTileCenter(newPosition);
         // Verifica se a posição é válida e se há uma barreira bloqueando
         if (!IsValidPosition(newPosition) || IsBlockedByBarrier(previousPosition, newPosition))
         {
-            player.Shake(previousPosition); // Feedback visual de movimento bloqueado
+            player.Shake(snappedCurrentPosition); // Feedback visual de movimento bloqueado
             return false;
         }
 
@@ -138,24 +141,54 @@ public class MoveCommand : ICommand
         return null;
     }
 
+
     private bool IsBlockedByBarrier(Vector3 currentPosition, Vector3 targetPosition)
     {
-        // Calcula o ponto médio entre a posição atual e a posição de destino
-        Vector3 midpoint = (currentPosition + targetPosition) / 2;
+        // Obtém as tiles atual e de destino
+        TileBehavior currentTile = LevelManager.Instance.GetTileAtPosition(currentPosition);
+        TileBehavior targetTile = LevelManager.Instance.GetTileAtPosition(targetPosition);
 
-        // Verifica colisões no ponto médio
-        Collider[] hits = Physics.OverlapSphere(midpoint, 0.1f); // Checa barreiras no meio do caminho
-        foreach (var hit in hits)
+        if (currentTile == null || targetTile == null)
         {
-            Barrier barrier = hit.GetComponent<Barrier>();
-            if (barrier != null && barrier.BlocksMovement(currentPosition, targetPosition))
-            {
-                return true;
-            }
+            Debug.LogWarning("Uma das tiles é nula. Movimento não pode ser realizado.");
+            return true; // Impede movimento se uma das tiles for inválida
         }
 
-        return false;
+        // Calcula a direção do movimento
+        Vector3 direction = targetPosition - currentPosition;
+
+        // Define uma tolerância para comparações de direção
+        float tolerance = 0.1f;
+
+        // Verifica barreiras na tile atual (saída)
+        if (Mathf.Abs(direction.z) > tolerance)
+        {
+            if (direction.z > 0 && currentTile.HasBarrierNorth) return true; // Norte
+            if (direction.z < 0 && currentTile.HasBarrierSouth) return true; // Sul
+        }
+
+        if (Mathf.Abs(direction.x) > tolerance)
+        {
+            if (direction.x > 0 && currentTile.HasBarrierEast) return true;  // Leste
+            if (direction.x < 0 && currentTile.HasBarrierWest) return true;  // Oeste
+        }
+
+        // Verifica barreiras na tile de destino (entrada)
+        if (Mathf.Abs(direction.z) > tolerance)
+        {
+            if (direction.z > 0 && targetTile.HasBarrierSouth) return true; // Entrando pelo Sul
+            if (direction.z < 0 && targetTile.HasBarrierNorth) return true; // Entrando pelo Norte
+        }
+
+        if (Mathf.Abs(direction.x) > tolerance)
+        {
+            if (direction.x > 0 && targetTile.HasBarrierWest) return true;  // Entrando pelo Oeste
+            if (direction.x < 0 && targetTile.HasBarrierEast) return true;  // Entrando pelo Leste
+        }
+
+        return false; // Nenhuma barreira bloqueia o movimento
     }
+
 
     private GameObject GetCollectableAtPosition(Vector3 position)
     {
@@ -168,5 +201,13 @@ public class MoveCommand : ICommand
             }
         }
         return null;
+    }
+
+    private Vector3 SnapToTileCenter(Vector3 position)
+    {
+        float tileDistance = LevelManager.Instance.tileDistance;
+        float x = Mathf.Round(position.x / tileDistance) * tileDistance;
+        float z = Mathf.Round(position.z / tileDistance) * tileDistance;
+        return new Vector3(x, position.y, z);
     }
 }

@@ -100,6 +100,7 @@ public class LevelManager : MonoBehaviour
 
         // Gera as barreiras
         GenerateBarriers();
+        AssignBarriersToTiles();
 
         BoardParentAdjuster.Instance.PrintTilePositions();
         BoardParentAdjuster.Instance.AdjustBoardParentPivot();
@@ -136,8 +137,21 @@ public class LevelManager : MonoBehaviour
             Instantiate(verticalBarrierPrefab, worldPosition, Quaternion.identity, boardParent);
         }
     }
+    public TileBehavior GetTileAtPosition(Vector3 position)
+    {
+        // Converte a posição global para índices no grid
+        int tileX = Mathf.RoundToInt(position.x / tileDistance);
+        int tileZ = Mathf.RoundToInt(position.z / tileDistance);
 
+        // Verifica se os índices estão dentro dos limites do tabuleiro
+        if (tileX >= 0 && tileX < CurrentLevel.xSize && tileZ >= 0 && tileZ < CurrentLevel.ySize)
+        {
+            return tiles[tileX, tileZ].GetComponent<TileBehavior>();
+        }
 
+        Debug.LogWarning($"Posição fora dos limites do tabuleiro: {position}");
+        return null; // Retorna nulo se a posição estiver fora dos limites
+    }
 
 
     public void LoadNextLevel()
@@ -166,6 +180,35 @@ public class LevelManager : MonoBehaviour
         foreach (Transform child in CollectableParent)
         {
             Destroy(child.gameObject);
+        }
+    }
+
+    private void AssignBarriersToTiles()
+    {
+        foreach (Vector3 barrier in CurrentLevel.HorizontalBarriers)
+        {
+            int x = Mathf.RoundToInt(barrier.x);
+            int z = Mathf.RoundToInt(barrier.z);
+
+            if (x < 0 || x >= CurrentLevel.xSize || z < 0 || z >= CurrentLevel.ySize) continue;
+
+            TileBehavior tile = tiles[x, z].GetComponent<TileBehavior>();
+
+            if (barrier.y == 0) tile.HasBarrierSouth = true;
+            if (barrier.y == 1) tile.HasBarrierNorth = true;
+        }
+
+        foreach (Vector3 barrier in CurrentLevel.VerticalBarriers)
+        {
+            int x = Mathf.RoundToInt(barrier.x);
+            int z = Mathf.RoundToInt(barrier.z);
+
+            if (x < 0 || x >= CurrentLevel.xSize || z < 0 || z >= CurrentLevel.ySize) continue;
+
+            TileBehavior tile = tiles[x, z].GetComponent<TileBehavior>();
+
+            if (barrier.y == 2) tile.HasBarrierWest = true;
+            if (barrier.y == 3) tile.HasBarrierEast = true;
         }
     }
 }
