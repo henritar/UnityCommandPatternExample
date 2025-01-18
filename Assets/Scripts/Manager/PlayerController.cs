@@ -59,7 +59,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E)) ExecuteCommand(new RotateBoardCommand(BoardParentAdjuster.Instance.boardParent, true));
 
         if (Input.GetKeyDown(KeyCode.Z)) UndoMove();
-        if (Input.GetKeyDown(KeyCode.R)) LevelManager.Instance.RestartLevel();
+        if (Input.GetKeyDown(KeyCode.R)) LevelManager.Instance.RestoreLevel();
     }
 
     void MovePlayer()

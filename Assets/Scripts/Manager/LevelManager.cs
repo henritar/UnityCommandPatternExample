@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class LevelManager : MonoBehaviour
@@ -26,6 +27,8 @@ public class LevelManager : MonoBehaviour
     private int levelIndex = 1; // Índice do nível, começando em 1
 
     private GameObject[,] tiles;
+    private List<Vector3> dynamicHorizontalBarriers;
+    private List<Vector3> dynamicVerticalBarriers;
 
     void Awake()
     {
@@ -101,6 +104,7 @@ public class LevelManager : MonoBehaviour
         // Gera as barreiras
         GenerateBarriers();
         AssignBarriersToTiles();
+        InitializeDynamicBarriers();
 
         BoardParentAdjuster.Instance.PrintTilePositions();
         BoardParentAdjuster.Instance.AdjustBoardParentPivot();
@@ -137,6 +141,12 @@ public class LevelManager : MonoBehaviour
             Instantiate(verticalBarrierPrefab, worldPosition, Quaternion.identity, boardParent);
         }
     }
+    private void InitializeDynamicBarriers()
+    {
+        dynamicHorizontalBarriers = new List<Vector3>(CurrentLevel.HorizontalBarriers);
+        dynamicVerticalBarriers = new List<Vector3>(CurrentLevel.VerticalBarriers);
+    }
+
     public TileBehavior GetTileAtPosition(Vector3 position)
     {
         // Converte a posição global para índices no grid
@@ -153,10 +163,15 @@ public class LevelManager : MonoBehaviour
         return null; // Retorna nulo se a posição estiver fora dos limites
     }
 
-
     public void LoadNextLevel()
     {
         levelIndex++;
+        LoadLevel();
+        RestartLevel();
+    }
+
+    public void RestoreLevel()
+    {
         LoadLevel();
         RestartLevel();
     }
@@ -211,4 +226,122 @@ public class LevelManager : MonoBehaviour
             if (barrier.y == 3) tile.HasBarrierEast = true;
         }
     }
+
+    public void RotateBoardState(bool clockwise)
+    {
+        int sizeX = CurrentLevel.xSize;
+        int sizeY = CurrentLevel.ySize;
+
+        // Cria novas listas para armazenar barreiras rotacionadas
+        List<Vector3> newHorizontalBarriers = new List<Vector3>();
+        List<Vector3> newVerticalBarriers = new List<Vector3>();
+
+        // Cria nova matriz para tiles rotacionadas
+        GameObject[,] newTiles = new GameObject[sizeX, sizeY];
+
+        // Rotaciona as tiles logicamente
+        for (int x = 0; x < sizeX; x++)
+        {
+            for (int y = 0; y < sizeY; y++)
+            {
+                int newX = clockwise ? y : sizeY - 1 - y;
+                int newY = clockwise ? sizeX - 1 - x : x;
+
+                newTiles[newX, newY] = tiles[x, y];
+            }
+        }
+
+        // Atualiza as barreiras horizontais
+        foreach (Vector3 barrier in dynamicHorizontalBarriers)
+        {
+            int x = Mathf.RoundToInt(barrier.x);
+            int z = Mathf.RoundToInt(barrier.z);
+            int side = Mathf.RoundToInt(barrier.y);
+
+            int newX = clockwise ? z : sizeY - 1 - z;
+            int newZ = clockwise ? sizeX - 1 - x : x;
+
+            if (clockwise)
+            {
+                if (side == 0) newVerticalBarriers.Add(new Vector3(newX, 2, newZ)); // Sul -> Oeste
+                if (side == 1) newVerticalBarriers.Add(new Vector3(newX, 3, newZ)); // Norte -> Leste
+            }
+            else
+            {
+                if (side == 0) newVerticalBarriers.Add(new Vector3(newX, 3, newZ)); // Sul -> Leste
+                if (side == 1) newVerticalBarriers.Add(new Vector3(newX, 2, newZ)); // Norte -> Oeste
+            }
+        }
+
+        // Atualiza as barreiras verticais
+        foreach (Vector3 barrier in dynamicVerticalBarriers)
+        {
+            int x = Mathf.RoundToInt(barrier.x);
+            int z = Mathf.RoundToInt(barrier.z);
+            int side = Mathf.RoundToInt(barrier.y);
+
+            int newX = clockwise ? z : sizeY - 1 - z;
+            int newZ = clockwise ? sizeX - 1 - x : x;
+
+            if (clockwise)
+            {
+                if (side == 2) newHorizontalBarriers.Add(new Vector3(newX, 1, newZ)); // Oeste -> Norte
+                if (side == 3) newHorizontalBarriers.Add(new Vector3(newX, 0, newZ)); // Leste -> Sul
+            }
+            else
+            {
+                if (side == 2) newHorizontalBarriers.Add(new Vector3(newX, 0, newZ)); // Oeste -> Sul
+                if (side == 3) newHorizontalBarriers.Add(new Vector3(newX, 1, newZ)); // Leste -> Norte
+            }
+        }
+
+        // Atualiza o estado no LevelManager
+        tiles = newTiles;
+        dynamicHorizontalBarriers = newHorizontalBarriers;
+        dynamicVerticalBarriers = newVerticalBarriers;
+
+        // Atualiza as tiles visualmente
+        UpdateTilesWithBarriers();
+
+        Debug.Log("Estado do tabuleiro rotacionado.");
+    }
+
+    public void UpdateTilesWithBarriers()
+    {
+        // Reseta todas as barreiras em todas as tiles
+        foreach (GameObject tileObject in tiles)
+        {
+            TileBehavior tile = tileObject.GetComponent<TileBehavior>();
+            tile.ResetBarriers();
+        }
+
+        // Aplica barreiras horizontais
+        foreach (Vector3 barrier in dynamicHorizontalBarriers)
+        {
+            int x = Mathf.RoundToInt(barrier.x);
+            int z = Mathf.RoundToInt(barrier.z);
+
+            if (x >= 0 && x < CurrentLevel.xSize && z >= 0 && z < CurrentLevel.ySize)
+            {
+                TileBehavior tile = tiles[x, z].GetComponent<TileBehavior>();
+                if (barrier.y == 0) tile.HasBarrierSouth = true;
+                if (barrier.y == 1) tile.HasBarrierNorth = true;
+            }
+        }
+
+        // Aplica barreiras verticais
+        foreach (Vector3 barrier in dynamicVerticalBarriers)
+        {
+            int x = Mathf.RoundToInt(barrier.x);
+            int z = Mathf.RoundToInt(barrier.z);
+
+            if (x >= 0 && x < CurrentLevel.xSize && z >= 0 && z < CurrentLevel.ySize)
+            {
+                TileBehavior tile = tiles[x, z].GetComponent<TileBehavior>();
+                if (barrier.y == 2) tile.HasBarrierWest = true;
+                if (barrier.y == 3) tile.HasBarrierEast = true;
+            }
+        }
+    }
+
 }

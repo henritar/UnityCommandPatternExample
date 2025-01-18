@@ -30,7 +30,6 @@ public class RotateBoardCommand : IAsyncCommand
     }
 
     public bool IsCompleted => isCompleted;
-
     private IEnumerator RotateBoardCoroutine(bool rotateClockwise)
     {
         float currentRotation = 0f;
@@ -42,25 +41,26 @@ public class RotateBoardCommand : IAsyncCommand
             float step = rotationSpeed * Time.deltaTime;
             float rotationThisFrame = Mathf.Min(step, Mathf.Abs(targetAngle - currentRotation));
 
-            // Rotaciona as tiles
             boardTransform.Rotate(rotationAxis, rotationThisFrame * Mathf.Sign(targetAngle), Space.Self);
             currentRotation += rotationThisFrame;
 
             yield return null;
         }
 
-        // Ajusta a rotação final para garantir precisão
         boardTransform.rotation = Quaternion.Euler(0, Mathf.Round(boardTransform.rotation.eulerAngles.y / 90f) * 90f, 0);
 
-        // Verifica a posição do jogador e ativa a tile correspondente
+        // Atualiza o estado lógico e visual do tabuleiro
+        LevelManager.Instance.RotateBoardState(rotateClockwise);
+
+        // Verifica e ativa a tile do jogador
         if (!CheckAndActivatePlayerTile())
         {
-            Debug.LogWarning("Jogador caiu em uma tile já ativada. Desfazendo rotação...");
-            PlayerController.Instance.UndoMove(); // Executa Undo
-            yield break; // Encerra a corrotina após desfazer
+            Debug.LogWarning("Jogador terminou em uma tile já ativada. Executando Undo...");
+            Undo();
+            yield break; // Encerra a execução da rotação
         }
 
-        isCompleted = true; // Marca o comando como concluído
+        isCompleted = true;
     }
 
 
@@ -88,15 +88,17 @@ public class RotateBoardCommand : IAsyncCommand
         // Verifica se a tile está ativa
         if (closestTile.IsActive)
         {
-            Debug.LogWarning("Tile já ativada. Rotação não permitida.");
+            Debug.LogWarning($"Tile {closestTile.name} já ativada. Rotação não permitida.");
             return false;
         }
 
         // Ativa a nova tile e atualiza a última ativa
         closestTile.ActivateTile();
         player.LastActiveTile = closestTile;
+        Debug.Log($"Nova tile ativada: {closestTile.name}");
         return true;
     }
+
 
     private TileBehavior FindClosestTile(Vector3 position)
     {

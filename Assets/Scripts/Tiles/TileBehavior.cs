@@ -62,4 +62,13 @@ public class TileBehavior : MonoBehaviour
         HasBarrierEast = east;
         HasBarrierWest = west;
     }
+
+    public void ResetBarriers()
+    {
+        HasBarrierNorth = false;
+        HasBarrierSouth = false;
+        HasBarrierEast = false;
+        HasBarrierWest = false;
+    }
+
 }
