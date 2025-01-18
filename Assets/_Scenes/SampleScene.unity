@@ -122,37 +122,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &32490289
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 32490290}
-  m_Layer: 0
-  m_Name: Evironment
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &32490290
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 32490289}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1929543150}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -540,7 +509,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1929543150}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &832575517
 GameObject:
@@ -730,7 +699,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1929543150}
+    m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 6250764862443529016, guid: feeba3a355f65b24490df3bb1b5e6a9d,
         type: 3}
@@ -821,10 +790,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1949047254}
-  - {fileID: 32490290}
-  - {fileID: 771295118}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1929543151
@@ -840,12 +806,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardParent: {fileID: 1929543150}
---- !u!4 &1949047254 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6250764862443529016, guid: feeba3a355f65b24490df3bb1b5e6a9d,
-    type: 3}
-  m_PrefabInstance: {fileID: 1874608029}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &335703390982873877
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -981,12 +941,12 @@ PrefabInstance:
         type: 3}
       propertyPath: TileParent
       value: 
-      objectReference: {fileID: 32490290}
+      objectReference: {fileID: 1929543150}
     - target: {fileID: 5510551503911378892, guid: 59928a20090111440ab75cdc2913cb92,
         type: 3}
       propertyPath: boardParent
       value: 
-      objectReference: {fileID: 32490290}
+      objectReference: {fileID: 1929543150}
     - target: {fileID: 5510551503911378892, guid: 59928a20090111440ab75cdc2913cb92,
         type: 3}
       propertyPath: CollectableParent
@@ -1008,4 +968,6 @@ SceneRoots:
   - {fileID: 585294433}
   - {fileID: 5949069765274685985}
   - {fileID: 335703390982873877}
+  - {fileID: 1874608029}
+  - {fileID: 771295118}
   - {fileID: 1929543150}

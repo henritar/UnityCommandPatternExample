@@ -34,13 +34,11 @@ public class LevelManager : MonoBehaviour
             Destroy(gameObject);
         }
         LoadLevel();
-        GenerateLevel();
     }
 
-    void Start()
+    private void Start()
     {
-        
-        
+        GenerateLevel();
     }
 
     void LoadLevel()
@@ -95,6 +93,9 @@ public class LevelManager : MonoBehaviour
             GameObject collectable = Instantiate(CollectablePrefab, adjustedPosition, Quaternion.identity, CollectableParent);
             collectable.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f); // Ajuste a escala do coletável, se necessário
         }
+
+        BoardParentAdjuster.Instance.PrintTilePositions();
+        BoardParentAdjuster.Instance.AdjustBoardParentPivot();
     }
 
     public void LoadNextLevel()

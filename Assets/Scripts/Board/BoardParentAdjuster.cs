@@ -19,11 +19,6 @@ public class BoardParentAdjuster : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        AdjustBoardParentPivot();
-    }
-
     public void AdjustBoardParentPivot()
     {
         if (boardParent == null)
@@ -32,71 +27,89 @@ public class BoardParentAdjuster : MonoBehaviour
             return;
         }
 
-        // Calcula os limites dos filhos
         Bounds bounds = CalculateBounds();
 
         if (bounds.size == Vector3.zero)
         {
-            Debug.LogError("Não foi possível calcular os limites dos filhos. Verifique se há objetos no BoardParent.");
+            Debug.LogError("Os limites dos filhos estão incorretos. Verifique a configuração do BoardParent.");
             return;
         }
 
-        // Reposiciona o BoardParent
         RepositionBoardParent(bounds);
     }
 
+
     private Bounds CalculateBounds()
     {
-        Bounds bounds = new Bounds(Vector3.zero, Vector3.zero); // Inicializa os bounds
+        Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
+        bool boundsInitialized = false;
 
         foreach (Transform child in boardParent)
         {
-            // Verifica se o filho tem Renderer
             Renderer childRenderer = child.GetComponent<Renderer>();
-
             if (childRenderer != null)
             {
-                // Se o filho tiver um Renderer, encapsula os Bounds do Renderer no espaço mundial
-                bounds.Encapsulate(childRenderer.bounds);
+                if (!boundsInitialized)
+                {
+                    bounds = new Bounds(childRenderer.bounds.center, childRenderer.bounds.size);
+                    boundsInitialized = true;
+                }
+                else
+                {
+                    bounds.Encapsulate(childRenderer.bounds);
+                }
             }
             else
             {
-                // Se não tiver Renderer, usamos a posição e escala do objeto
-                bounds.Encapsulate(child.position);
+                if (!boundsInitialized)
+                {
+                    bounds = new Bounds(child.position, Vector3.zero);
+                    boundsInitialized = true;
+                }
+                else
+                {
+                    bounds.Encapsulate(child.position);
+                }
             }
         }
 
-        if (bounds.size == Vector3.zero)
+        if (!boundsInitialized)
         {
-            Debug.LogError("Nenhum filho válido foi encontrado no BoardParent.");
-            return new Bounds(Vector3.zero, Vector3.zero); // Retorna bounds inválido se não encontrar nada
+            Debug.LogError("Nenhum filho válido encontrado no BoardParent.");
         }
 
-        // Log para depuração
         Debug.Log($"Bounds calculados: Center = {bounds.center}, Size = {bounds.size}");
-
         return bounds;
     }
 
 
-
     private void RepositionBoardParent(Bounds bounds)
     {
-        // Calcula o centro do BoardParent
+        // Calcula o centro dos limites dos filhos
         Vector3 center = bounds.center;
 
-        // Muda a posição do BoardParent para o centro
-        Vector3 offset = boardParent.position - center;
+        // Calcula o deslocamento entre a posição atual do BoardParent e o centro
+        Vector3 offset = center - boardParent.position;
+
+        // Move o BoardParent para o centro calculado
         boardParent.position = center;
 
-        // Compensa o movimento do BoardParent ajustando as posições dos filhos
+        // Ajusta os filhos para compensar o movimento do BoardParent
         foreach (Transform child in boardParent)
         {
-            child.position += offset;
+            child.position -= offset;
         }
 
-        // Log para depuração
-        Debug.Log($"Pivô do BoardParent ajustado ao centro: {center}");
+        Debug.Log($"Pivô do BoardParent ajustado ao centro calculado: {center}");
     }
+
+    public void PrintTilePositions()
+    {
+        foreach (Transform child in boardParent)
+        {
+            Debug.Log($"Tile: {child.name}, Global Position: {child.position}");
+        }
+    }
+
 
 }
