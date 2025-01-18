@@ -26,11 +26,20 @@ public class RotateBoardCommand : IAsyncCommand
     public void Undo()
     {
         isCompleted = false; // Reseta o estado de conclusão
-        PlayerController.Instance.StartCoroutine(RotateBoardCoroutine(!clockwise));
+        PlayerController player = PlayerController.Instance;
+
+        // Desativa a tile atual
+        if (player.LastActiveTile != null && player.LastActiveTile.IsActive)
+        {
+            player.LastActiveTile.DeactivateTile();
+            Debug.Log($"Tile {player.LastActiveTile.name} desativada antes do Undo.");
+        }
+
+        PlayerController.Instance.StartCoroutine(RotateBoardCoroutine(!clockwise, true));
     }
 
     public bool IsCompleted => isCompleted;
-    private IEnumerator RotateBoardCoroutine(bool rotateClockwise)
+    private IEnumerator RotateBoardCoroutine(bool rotateClockwise, bool isUndo = false)
     {
         float currentRotation = 0f;
         float targetAngle = rotateClockwise ? rotationAngle : -rotationAngle;
@@ -52,16 +61,20 @@ public class RotateBoardCommand : IAsyncCommand
         // Atualiza o estado lógico e visual do tabuleiro
         LevelManager.Instance.RotateBoardState(rotateClockwise);
 
-        // Verifica e ativa a tile do jogador
-        if (!CheckAndActivatePlayerTile())
+        if (!isUndo) // Apenas verifica tiles se não for Undo
         {
-            Debug.LogWarning("Jogador terminou em uma tile já ativada. Executando Undo...");
-            Undo();
-            yield break; // Encerra a execução da rotação
+            // Verifica e ativa a tile do jogador
+            if (!CheckAndActivatePlayerTile())
+            {
+                Debug.LogWarning("Jogador terminou em uma tile já ativada. Executando Undo...");
+                Undo();
+                yield break; // Encerra a execução da rotação
+            }
         }
 
         isCompleted = true;
     }
+
 
 
 
