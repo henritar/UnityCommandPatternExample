@@ -991,6 +991,11 @@ PrefabInstance:
       objectReference: {fileID: 1929543150}
     - target: {fileID: 5510551503911378892, guid: 59928a20090111440ab75cdc2913cb92,
         type: 3}
+      propertyPath: levelIndex
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5510551503911378892, guid: 59928a20090111440ab75cdc2913cb92,
+        type: 3}
       propertyPath: boardParent
       value: 
       objectReference: {fileID: 1929543150}

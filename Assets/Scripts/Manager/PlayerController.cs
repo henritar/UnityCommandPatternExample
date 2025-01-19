@@ -50,6 +50,8 @@ public class PlayerController : MonoBehaviour
     void HandleInput()
     {
         if (Vector3.Distance(transform.position, targetPosition) > 0.1f) return;
+        if (RotateBoardCommand.isRotating) return;
+
 
         if (Input.GetKeyDown(KeyCode.W)) ExecuteCommand(new MoveCommand(this, Vector3.forward));
         if (Input.GetKeyDown(KeyCode.S)) ExecuteCommand(new MoveCommand(this, Vector3.back));
@@ -163,7 +165,8 @@ public class PlayerController : MonoBehaviour
         TileBehavior closestTile = FindClosestTile(transform.position);
         if (closestTile != null)
         {
-            SetTargetPosition(closestTile.transform.position);
+            var closestTilePosition = new Vector3(closestTile.transform.position.x, transform.position.y, closestTile.transform.position.z);
+            SetTargetPosition(closestTilePosition);
         }
     }
 

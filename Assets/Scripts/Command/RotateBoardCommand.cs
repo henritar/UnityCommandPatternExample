@@ -3,12 +3,15 @@ using System.Collections;
 
 public class RotateBoardCommand : IAsyncCommand
 {
+    public static bool isRotating = false;
+
     private Transform boardTransform;
     private bool clockwise;
     private float rotationAngle = 90f;
     private float rotationSpeed = 100f; // Velocidade da rotação em graus por segundo
 
     private bool isCompleted = false; // Indica se o comando foi concluído
+    private bool isAutoUndo = false; // Indica se o próximo Undo é automático
 
     public RotateBoardCommand(Transform boardTransform, bool clockwise)
     {
@@ -29,18 +32,21 @@ public class RotateBoardCommand : IAsyncCommand
         PlayerController player = PlayerController.Instance;
 
         // Desativa a tile atual
-        if (player.LastActiveTile != null && player.LastActiveTile.IsActive)
+        if (!isAutoUndo)
         {
             player.LastActiveTile.DeactivateTile();
             Debug.Log($"Tile {player.LastActiveTile.name} desativada antes do Undo.");
         }
 
+        isAutoUndo = false;
         PlayerController.Instance.StartCoroutine(RotateBoardCoroutine(!clockwise, true));
     }
 
     public bool IsCompleted => isCompleted;
     private IEnumerator RotateBoardCoroutine(bool rotateClockwise, bool isUndo = false)
     {
+        isRotating = true;
+
         float currentRotation = 0f;
         float targetAngle = rotateClockwise ? rotationAngle : -rotationAngle;
         Vector3 rotationAxis = Vector3.up;
@@ -67,12 +73,16 @@ public class RotateBoardCommand : IAsyncCommand
             if (!CheckAndActivatePlayerTile())
             {
                 Debug.LogWarning("Jogador terminou em uma tile já ativada. Executando Undo...");
-                Undo();
+                isAutoUndo = true;
+                PlayerController.Instance.UndoMove();
                 yield break; // Encerra a execução da rotação
             }
         }
 
+        PlayerController.Instance.AdjustPlayerPosition();
+
         isCompleted = true;
+        isRotating = false;
     }
 
 
@@ -94,6 +104,7 @@ public class RotateBoardCommand : IAsyncCommand
         // Permite permanecer na mesma tile
         if (closestTile == player.LastActiveTile)
         {
+            closestTile.ActivateTile();
             Debug.Log("Jogador permaneceu na mesma tile. Rotação permitida.");
             return true;
         }
