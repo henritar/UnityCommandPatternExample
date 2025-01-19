@@ -46,7 +46,6 @@ public class CollectableManager : MonoBehaviour
     {
         Debug.Log("Level Complete!");
         LevelManager.Instance.LoadNextLevel(); // Avança para o próximo nível
-        PlayerController.Instance.RestartLevel();
     }
 
     public void RestartLevel()

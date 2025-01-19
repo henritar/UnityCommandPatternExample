@@ -167,6 +167,11 @@ public class LevelManager : MonoBehaviour
     public void LoadNextLevel()
     {
         levelIndex++;
+        if (levelIndex >= 4)
+        {
+            Debug.Log("GameOver!");
+            return;
+        }
         LoadLevel();
         RestartLevel();
     }
