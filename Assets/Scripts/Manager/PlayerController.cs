@@ -52,6 +52,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Vector3.Distance(transform.position, targetPosition) > 0.1f) return;
         if (RotateBoardCommand.isRotating) return;
+        if (LevelManager.Instance.GameOver) return;
 
 
         if (Input.GetKeyDown(KeyCode.W)) ExecuteCommand(new MoveCommand(this, Vector3.forward));

@@ -8,6 +8,8 @@ public class LevelManager : MonoBehaviour
 
     public float tileDistance = 5f; // Espaçamento entre as tiles
 
+    public GameObject GameOverMenu;
+
     [NonSerialized]
     public SO_Level CurrentLevel;
     [SerializeField]
@@ -29,6 +31,7 @@ public class LevelManager : MonoBehaviour
     private GameObject[,] tiles;
     private List<Vector3> dynamicHorizontalBarriers;
     private List<Vector3> dynamicVerticalBarriers;
+    public bool GameOver => GameOverMenu.activeSelf;
 
     void Awake()
     {
@@ -45,6 +48,7 @@ public class LevelManager : MonoBehaviour
 
     private void Start()
     {
+        GameOverMenu.SetActive(false);
         GenerateLevel();
     }
 
@@ -170,6 +174,7 @@ public class LevelManager : MonoBehaviour
         if (levelIndex >= 4)
         {
             Debug.Log("GameOver!");
+            GameOverMenu.SetActive(true);
             return;
         }
         LoadLevel();
