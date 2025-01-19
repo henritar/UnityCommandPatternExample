@@ -192,7 +192,7 @@ public class MoveCommand : ICommand
 
     private GameObject GetCollectableAtPosition(Vector3 position)
     {
-        Collider[] hits = Physics.OverlapSphere(position, 1f);
+        Collider[] hits = Physics.OverlapSphere(position, 2f);
         foreach (var hit in hits)
         {
             if (hit.CompareTag("Collectable"))

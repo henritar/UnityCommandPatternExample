@@ -46,7 +46,7 @@ public class RotateBoardCommand : IAsyncCommand
     private IEnumerator RotateBoardCoroutine(bool rotateClockwise, bool isUndo = false)
     {
         isRotating = true;
-
+        PlayerController.Instance.animator.SetBool("Jump", true);
         float currentRotation = 0f;
         float targetAngle = rotateClockwise ? rotationAngle : -rotationAngle;
         Vector3 rotationAxis = Vector3.up;
@@ -74,11 +74,13 @@ public class RotateBoardCommand : IAsyncCommand
             {
                 Debug.LogWarning("Jogador terminou em uma tile já ativada. Executando Undo...");
                 isAutoUndo = true;
+                PlayerController.Instance.animator.SetBool("Jump", false);
                 PlayerController.Instance.UndoMove();
                 yield break; // Encerra a execução da rotação
             }
         }
 
+        PlayerController.Instance.animator.SetBool("Jump", false);
         PlayerController.Instance.AdjustPlayerPosition();
 
         isCompleted = true;
