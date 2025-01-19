@@ -193,7 +193,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private TileBehavior FindClosestTile(Vector3 position)
+    public TileBehavior FindClosestTile(Vector3 position)
     {
         TileBehavior closestTile = null;
         float closestDistance = float.MaxValue;

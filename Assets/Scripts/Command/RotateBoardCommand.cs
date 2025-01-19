@@ -32,7 +32,7 @@ public class RotateBoardCommand : IAsyncCommand
         PlayerController player = PlayerController.Instance;
 
         // Desativa a tile atual
-        if (!isAutoUndo)
+        if (!isAutoUndo && player.LastActiveTile.transform.position != boardTransform.position)
         {
             player.LastActiveTile.DeactivateTile();
             Debug.Log($"Tile {player.LastActiveTile.name} desativada antes do Undo.");
