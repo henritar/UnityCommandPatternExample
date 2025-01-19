@@ -11,9 +11,6 @@ public class CollectableBehavior : MonoBehaviour
 
     public CollectableType type = CollectableType.Regular; // Tipo padrão
 
-    // Parâmetros de oscilação
-    public float floatAmplitude = 0.5f; // Amplitude do movimento (altura)
-    public float floatFrequency = 1f;  // Frequência do movimento (velocidade)
 
     private Vector3 startPosition; // Posição inicial do coletável
 
@@ -30,14 +27,5 @@ public class CollectableBehavior : MonoBehaviour
 
         // Atribui o tipo correspondente ao índice gerado
         type = (CollectableType)randomValue;
-    }
-
-    private void Update()
-    {
-        // Calcula a nova posição com base na senoide
-        float newY = startPosition.y + Mathf.Sin(Time.time * floatFrequency) * floatAmplitude;
-
-        // Aplica a nova posição
-        transform.position = new Vector3(startPosition.x, newY, startPosition.z);
     }
 }

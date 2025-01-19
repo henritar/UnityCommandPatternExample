@@ -15,9 +15,8 @@ MonoBehaviour:
   xSize: 5
   ySize: 5
   CollectablePosition:
-  - {x: 0, y: 1.5, z: 2}
+  - {x: 1, y: 1.5, z: 3}
   - {x: 2, y: 1.5, z: 0}
-  - {x: 4, y: 1.5, z: 4}
   - {x: 1, y: 1.5, z: 4}
   - {x: 3, y: 1.5, z: 2}
   VerticalBarriers:

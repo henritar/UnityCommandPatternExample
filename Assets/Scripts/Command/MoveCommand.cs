@@ -97,26 +97,8 @@ public class MoveCommand : ICommand
         if (collectedItem == null) return;
 
         collectedItem.SetActive(false);
-        var collectable = collectedItem.GetComponent<CollectableBehavior>();
 
-        if (collectable != null)
-        {
-            HandleCollectableType(collectable);
-        }
-    }
-
-    private void HandleCollectableType(CollectableBehavior collectable)
-    {
-        // Sempre atualiza o contador de coletáveis
         CollectableManager.Instance.CollectItem();
-
-        // Executa ações específicas com base no tipo
-        switch (collectable.type)
-        {
-            case CollectableBehavior.CollectableType.RotateBoard:
-            default:
-                break;
-        }
     }
 
 
