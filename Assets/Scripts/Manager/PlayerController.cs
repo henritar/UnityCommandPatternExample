@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     public static PlayerController Instance { get; private set; }
 
     public TileBehavior LastActiveTile { get; set; } // Última tile onde o jogador estava
+    public Animator animator; // Referência ao Animator
 
     public float moveSpeed = 5f;
     private bool isUndoing = false; // Flag para evitar reentrância no Undo
@@ -66,8 +67,30 @@ public class PlayerController : MonoBehaviour
 
     void MovePlayer()
     {
+        // Atualiza a posição
         transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * moveSpeed);
+
+        // Calcula a velocidade atual
+        float speed = Vector3.Distance(transform.position, targetPosition);
+
+        // Atualiza o parâmetro no Animator
+        animator.SetFloat("Speed", speed);
+
+        // Rotaciona na direção do movimento
+        Vector3 direction = (targetPosition - transform.position).normalized;
+        if (direction != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+        }
+
+        // Garante que o personagem pare exatamente na tile
+        if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
+        {
+            transform.position = targetPosition;
+        }
     }
+
 
     public void SetTargetPosition(Vector3 newPosition)
     {

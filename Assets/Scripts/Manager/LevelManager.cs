@@ -97,7 +97,8 @@ public class LevelManager : MonoBehaviour
         {
             // Ajustar a posição do colecionável para usar o mesmo sistema de grid absoluto
             Vector3 adjustedPosition = new Vector3(position.x * 5, position.y, position.z * 5);
-            GameObject collectable = Instantiate(CollectablePrefab, adjustedPosition, Quaternion.identity, CollectableParent);
+            Quaternion rotation = new Quaternion(-90, 0 ,0, 1);
+            GameObject collectable = Instantiate(CollectablePrefab, adjustedPosition, rotation, CollectableParent);
             collectable.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f); // Ajuste a escala do coletável, se necessário
         }
 

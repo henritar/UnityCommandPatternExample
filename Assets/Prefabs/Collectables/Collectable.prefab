@@ -119,3 +119,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
+  floatAmplitude: 0.25
+  floatFrequency: 1.5
